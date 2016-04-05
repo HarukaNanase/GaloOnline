@@ -15,4 +15,9 @@ V0.01 - Basic implementation of Client-Server architecture.   - 04/04/2016  - An
 
 V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - André Soares
         Account Registation and 'Database'             - 05/04/2016 02:38 - André Soares
-        /* TO Continue */
+        Definition of Error and Success Message        - 05/04/2016 16:35 - André Soares
+        Updated Project Socket Library                 - 05/04/2016 16:35 - André Soares
+        First communication test                       - 05/04/2016 16:36 - André Soares
+        Check for error in register                    - 05/04/2016 16:36 - André Soares
+        Register mechanism 95% completed               - 05/04/2016 16:37 - André Soares
+        #TODO : Finish LoadAccounts                    - 05/04/2016 16:38 - André Soares
