@@ -1,6 +1,6 @@
 ####################################################################################################################
 #                                                    GaloOnline                                                    #
-#                                                                                                                  #
+#                                           Registo do trabalho efectuado                                          #
 #                                                                                                                  #
 #                                                                                                                  #
 #                                                                                                                  #
@@ -11,4 +11,8 @@
 
 
 
-V0.01 - Basic implementation of Client-Server architecture.   - 04/04/2016
+V0.01 - Basic implementation of Client-Server architecture.   - 04/04/2016  - André Soares
+
+V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - André Soares
+        Account Registation and 'Database'             - 05/04/2016 02:38 - André Soares
+        /* TO Continue */
