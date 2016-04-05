@@ -20,4 +20,5 @@ V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - Andr
         First communication test                       - 05/04/2016 16:36 - André Soares
         Check for error in register                    - 05/04/2016 16:36 - André Soares
         Register mechanism 95% completed               - 05/04/2016 16:37 - André Soares
-        #TODO : Finish LoadAccounts                    - 05/04/2016 16:38 - André Soares
+        Finished LoadAccounts                          - 05/04/2016 19:53 - André Soares
+        

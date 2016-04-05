@@ -4,7 +4,6 @@ import sys
 
 #Define
 Version = "v0.02"
-
 ServerAddress = "Acer7745G"
 Port = 8000
 ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -12,11 +11,13 @@ SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 #EndDefine
 
-#Message Encodes
 
+#Message Encodes
 SuccessMessage = SuccessMessage.encode()
 ErrorMessage = ErrorMessage.encode()
 #
+
+
 print("Bem vindo ao cliente do GaloOnline\nVersão:"+Version+"\nHave Fun!\n")
 
 print("Escreva /registo para se registar!\nSe já se encontrar registado, utilize /login para efectuar o seu login")
