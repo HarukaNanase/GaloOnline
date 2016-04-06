@@ -1,42 +1,28 @@
-import socket
+from GaloOnlineAPI import *
 import os
 
 #Define
+ServerIP = socket.gethostname()
 Port = 8000
 UsersPath = "./users/"
 FileExtension = ".txt"
-
+SuccessMessage = "ACK"
+ErrorMessage = "ERR"
+MessageMaxSize = 256
 #EndDefine
+
+#Message Encodes
+SuccessMessage = SuccessMessage.encode()
+ErrorMessage = ErrorMessage.encode()
+#
+
+
 def CheckDir():
     if os.path.exists(UsersPath):
         return True
     else:
         os.makedirs(UsersPath)
         return False
-
-
-def CreateServerSocket():
-    try:
-        ServerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print("Socket Sucessfully Created!")
-        ServerSocket.bind((socket.gethostname(), Port))
-        print("Socket binded Sucessfully")
-        return ServerSocket
-    except socket.error:
-        print("Unable to create Socket.")
-
-
-def WriteToSocket(ServerSocket, msg, address):
-    try:
-        ServerSocket.sendto(msg, address)
-        return True
-    except socket.error:
-        print("Unable to send message to address %s", address)
-        return False
-
-
-def ReadFromSocket(ServerSocket):
-    return ServerSocket.recvfrom(256)
 
 
 def CreateAccount(name, password, accounts):
@@ -49,13 +35,26 @@ def CreateAccount(name, password, accounts):
             userfile.close()
             accounts[name] = password
             print("Account created!")
-            return accounts
+            #return accounts
         except IOError:
             print("Error opening file.")
             return False
 
-def LoadAccounts():
-    #TODO
+
+def LoadAccounts(Accounts):
+    files = []
+    for(dirpath, dirnames, filenames) in os.walk(UsersPath):
+        files.extend(filenames)
+    for(FileName) in files:
+        try:
+            OpenFile = open(UsersPath + FileName)
+            UserPassword = OpenFile.read()
+            OpenFile.close()
+            username = os.path.splitext(FileName)
+            Accounts[username[0]] = UserPassword
+        except IOError:
+            print("Error loading account database... Server won't be loaded with any account")
+            continue
 
 
 def Login(name, password):
@@ -84,24 +83,27 @@ def Login(name, password):
 def main():
     CheckDir()
     Accounts = {}
+    LoadAccounts(Accounts)
+    print(Accounts)
     LoggedInUsers = {}
     ServerSocket = CreateServerSocket()
-    print(socket.gethostname())
+    print("Hosting @"+ServerIP)
     while 1:
         Data = ReadFromSocket(ServerSocket)
         UserIP = Data[1]
         OpCode = Data[0].decode()
-        print(OpCode)
+        print("Mensagem recebida: ", OpCode)
         OpCode = OpCode.split()
         print(OpCode[0])
         print(OpCode[1])
         print(OpCode[2])
         if OpCode[0] == "REG":
-            Sucess = CreateAccount(OpCode[1], OpCode[2], Accounts)
-            if Sucess == False:
+            Success = CreateAccount(OpCode[1], OpCode[2], Accounts)
+            if Success == False:
                 print("Account creation failed. Now continuing.")
-                continue
+                WriteToSocket(ServerSocket, ErrorMessage, UserIP)
             else:
+                WriteToSocket(ServerSocket, SuccessMessage, UserIP)
                 #Accounts = Sucess
                 print(Accounts)
         else:
