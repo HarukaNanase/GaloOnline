@@ -1,8 +1,5 @@
-###### Import Section #####
-import os
 from GaloOnlineAPI import *
-###########################
-
+import os
 
 #Define
 ServerIP = socket.gethostname()

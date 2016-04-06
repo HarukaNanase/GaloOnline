@@ -21,4 +21,7 @@ V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - Andr
         Check for error in register                    - 05/04/2016 16:36 - André Soares
         Register mechanism 95% completed               - 05/04/2016 16:37 - André Soares
         Finished LoadAccounts                          - 05/04/2016 19:53 - André Soares
-        
+        Changed to GaloOnlineAPI                       - 05/04/2016 01:14 - André Soares
+        #TODO Finish GaloOnlineAPI
+        #TODO Implement tries and timeout onto GaloOnlineAPI
+        #TODO Implemente safebacks onto GaloOnlineAPI

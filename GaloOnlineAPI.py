@@ -1,11 +1,9 @@
 import socket
-
-
 #Define
 ServerIP = socket.gethostname()
 Port = 8000
-UsersPath = "./users/"
-FileExtension = ".txt"
+#UsersPath = "./users/"
+#FileExtension = ".txt"
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 MessageMaxSize = 256
@@ -46,7 +44,5 @@ def WriteToSocket(ServerSocket, msg, address):
 
 
 def ReadFromSocket(ServerSocket):
-    DataRead = ServerSocket.recvfrom(MessageMaxSize)
-    if(DataRead[0] == ""):
-        ServerSocket.sendto(ErrorMessage,)
+    return ServerSocket.recvfrom(MessageMaxSize)
 
