@@ -2,6 +2,7 @@ from GaloOnlineAPI import *
 import os
 
 #Define
+Sender = "Client"
 ServerIP = socket.gethostname()
 Port = 8000
 UsersPath = "./users/"
@@ -9,6 +10,8 @@ FileExtension = ".txt"
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 MessageMaxSize = 256
+NumberOfTries = 5
+TimeOut = 2
 #EndDefine
 
 #Message Encodes
@@ -16,6 +19,49 @@ SuccessMessage = SuccessMessage.encode()
 ErrorMessage = ErrorMessage.encode()
 #
 
+def CreateServerSocket():
+    try:
+        ServerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print("Socket Sucessfully Created!")
+        ServerSocket.bind((ServerIP, Port))
+        print("Socket binded Sucessfully")
+        return ServerSocket
+    except socket.error:
+        print("Unable to create Socket.")
+
+
+def WriteToSocket(ServerSocket, msg, address):
+    try:
+        ServerSocket.sendto(msg, address)
+        data = 0
+        i = 0
+        ServerSocket.settimeout(TimeOut)
+        while i < NumberOfTries:
+            data = ServerSocket.recvfrom(MessageMaxSize)
+            if data == 0:
+                ServerSocket.sendto(msg, address)
+                i += 1
+            else:
+                ServerSocket.settimeout(None)
+                break
+        UserEndPoint = data[1]
+        userMsg = data[0]
+        userMsg = userMsg.decode()
+        #  print(userMsg)
+
+        if userMsg == SuccessMessage.decode():
+            print("Message Successfully Sent. Received ACK from:", Sender +" " + UserEndPoint[0] + ":" +"%d", UserEndPoint[1])
+            return True
+        else:
+            print("Error on receiving ACK from client " + data[1][0])
+            return False
+    except socket.error:
+        print("Unable to send message to address: ", address)
+        return False
+
+
+def ReadFromSocket(ServerSocket):
+    return ServerSocket.recvfrom(MessageMaxSize)
 
 def CheckDir():
     if os.path.exists(UsersPath):

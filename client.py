@@ -3,6 +3,7 @@ import getpass
 import sys
 
 #Define
+Sender = "Server"
 Version = "v0.02"
 ServerAddress = "Acer7745G"
 Port = 8000
@@ -28,8 +29,14 @@ while(True):
     if command == "/registo":
         print("Irá proceder ao registo de uma conta no GaloOnline.\nAo se registar está a aceitar os termos"
               " e condições propostas.")
-        tos = input('Aceita as condiçoes? Y/N:')
-        if tos == "Y" or tos == "y":
+        tos = ""
+        while tos != "Y" or tos != "y" or tos != "N" or tos != "n":
+            tos = input('Aceita as condiçoes? Y/N:')
+            if tos == "N" or tos == "n" or tos == "Y" or tos == "y":
+                break
+        if tos == "N" or tos == "n":
+            continue
+        else:
             username = input('Introduza o username desejado:')
             password = input('Introduza a password desejada:')
             MsgToSend = "REG "+ username + " " + password
@@ -49,13 +56,13 @@ while(True):
                     print("Didn't receive anything from server...")
                 elif ServerAns[0] == "ERR":
                     print("Erro no servidor. Conta não foi criada.")
-                    ClientSocket.sendto(SuccessMessage,(ServerAddress, Port))
+                    ClientSocket.sendto(SuccessMessage, (ServerAddress, Port))
                 else:
                     if ServerAns[0] == "ACK":
                         ClientSocket.sendto(SuccessMessage, (ServerAddress, Port))
                         print("Conta Registada com sucesso!")
-                #       break
-            #TODO: Ligação ao servidor para o registo
+                        #   break
+                    #TODO: Ligação ao servidor para o registo
 
 
 
