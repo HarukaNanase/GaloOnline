@@ -79,7 +79,7 @@ def ReadFromSocket(Socket):
         SenderEndPoint = Received[1]
         if ReceivedMsg != "":
             Socket.sendto(SuccessMessage, SenderEndPoint)
-            return (ReceivedMsg, SenderEndPoint)
+            return ReceivedMsg, SenderEndPoint
         else:
             Socket.sendto(ErrorMessage, SenderEndPoint)
             return False

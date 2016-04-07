@@ -1,5 +1,5 @@
 from GaloOnlineAPI import *
-
+import json
 #Define
 Sender = "Server"
 THIS = "Client"
@@ -71,7 +71,11 @@ while(True):
                     print("Welcome to GaloOnline. Here's the menu for the game options")
                 else:
                     print("Failed to login. Wrong username or password")
-
+    elif command == "/lista":
+            Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
+            Received = ReadFromSocket(ClientSocket)
+            OnlineList = json.loads(Received[0])
+            print(OnlineList)
 
 
 

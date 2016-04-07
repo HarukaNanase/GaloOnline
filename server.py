@@ -1,6 +1,7 @@
 from GaloOnlineAPI import *
 from AccountSystem import *
-import os
+import json
+import sys
 
 
 #Define
@@ -36,8 +37,6 @@ def main():
         print("Mensagem recebida: ", OpCode)
         OpCode = OpCode.split()
         print(OpCode[0])
-        print(OpCode[1])
-        print(OpCode[2])
         if OpCode[0] == "REG":
             Success = CreateAccount(OpCode[1], OpCode[2], Accounts)
             if Success == False:
@@ -56,6 +55,10 @@ def main():
             else:
                 WriteToSocket(ServerSocket, ErrorMessage, UserIP)
                 print("User " + OpCode[1] + " has entered a wrong password./")
+        elif OpCode[0] == "LIST":
+            OnlineList = json.dumps(LoggedInUsers)
+            print(sys.getsizeof(OnlineList))
+            WriteToSocket(ServerSocket, OnlineList, UserIP)
         else:
             continue
 
