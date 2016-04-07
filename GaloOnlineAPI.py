@@ -58,10 +58,10 @@ def WriteToSocket(Socket, msg, address):
         #  print(userMsg)
 
         if userMsg == SuccessMessage.decode():
-            print("Message Successfully Sent. Received ACK from:", Sender + " " + UserEndPoint[0] + ":", UserEndPoint[1])
+            print("Message Successfully Sent. Received ACK from:", UserEndPoint[0] + ":", UserEndPoint[1])
             return True
         else:
-            print("Error on receiving ACK from "+  + data[1][0])
+            print("Error on receiving ACK from " + data[1][0])
             return False
     except socket.error:
         print("Unable to send message to address: ", address)

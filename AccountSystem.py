@@ -57,7 +57,7 @@ def Login(name, password, Accounts, LoggedInUsers, UserIP):
 
             userfile.close()
             if password == passUser:
-                LoggedInUsers[name] = UserIP
+                LoggedInUsers[name] = UserIP, "Online"
                 return True
             else:
                 return False

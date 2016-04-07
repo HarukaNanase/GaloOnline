@@ -1,10 +1,12 @@
 from GaloOnlineAPI import *
 import json
+import sys
+
 #Define
 Sender = "Server"
 THIS = "Client"
 Version = "v0.02"
-ServerIP = "Acer7745G"
+ServerIP = "Balbadd"
 Port = 8000
 ServerAddress = (ServerIP, Port)
 ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -75,7 +77,10 @@ while(True):
             Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
             Received = ReadFromSocket(ClientSocket)
             OnlineList = json.loads(Received[0])
+            print(sys.getsizeof(OnlineList))
             print(OnlineList)
+    elif command == "/invite":
+        PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")
 
 
 
