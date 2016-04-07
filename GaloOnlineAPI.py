@@ -71,7 +71,7 @@ def WriteToSocket(Socket, msg, address):
 def ReadFromSocket(Socket):
     Received = 0
     Received = Socket.recvfrom(MessageMaxSize)
-    if(Received == 0):
+    if Received == 0:
         print("Didn't receive anything. Error on socket / Nothing was sent to us.")
         return False
     else:
