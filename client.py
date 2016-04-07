@@ -1,12 +1,12 @@
-import socket
-import getpass
-import sys
+from GaloOnlineAPI import *
 
 #Define
 Sender = "Server"
+THIS = "Client"
 Version = "v0.02"
-ServerAddress = "Acer7745G"
+ServerIP = "Acer7745G"
 Port = 8000
+ServerAddress = (ServerIP, Port)
 ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
@@ -40,29 +40,40 @@ while(True):
             username = input('Introduza o username desejado:')
             password = input('Introduza a password desejada:')
             MsgToSend = "REG "+ username + " " + password
-            Sent = ClientSocket.sendto(MsgToSend.encode(), (ServerAddress, Port))
+            Sent = WriteToSocket(ClientSocket, MsgToSend, ServerAddress)
             if Sent == 0:
                 print("Nothing was sent. Error?")
             else:
                 print("Message was sucessfully sent!")
                 print("Now awaiting server answer...")
-                #i = 0
-                #while i < 5:
-                Received = ClientSocket.recvfrom(256)
-                ServerAns = Received[0]
-                ServerAns = ServerAns.decode()
-                ServerAns = ServerAns.split()
-                if ServerAns[0] == 0:
-                    print("Didn't receive anything from server...")
-                elif ServerAns[0] == "ERR":
-                    print("Erro no servidor. Conta não foi criada.")
-                    ClientSocket.sendto(SuccessMessage, (ServerAddress, Port))
+                Answer = ReadFromSocket(ClientSocket)
+                if Answer == 0:
+                    print("Error receiving answer from server.")
                 else:
-                    if ServerAns[0] == "ACK":
-                        ClientSocket.sendto(SuccessMessage, (ServerAddress, Port))
-                        print("Conta Registada com sucesso!")
-                        #   break
-                    #TODO: Ligação ao servidor para o registo
+                    if(Answer[0] == "ACK"):
+                        print("Account Sucessfully Created! Welcome to GaloOnline.")
+                    else:
+                        print("Account not created. User already exists.")
+    if command == "/login":
+        username = input('Introduza o seu username:')
+        password= input('Introduza a sua password:')
+        MsgToSend = "LOG " + username + " " + password
+        Sent = WriteToSocket(ClientSocket, MsgToSend, ServerAddress)
+        if Sent == 0:
+            print("Nothing was sent. Error?")
+        else:
+            Answer = ReadFromSocket(ClientSocket)
+            print("Logging in...")
+            if Answer == 0:
+                print("Error logging in. Failed to receive an answer from the server.")
+            else:
+                if(Answer[0] == "ACK"):
+                    print("Welcome to GaloOnline. Here's the menu for the game options")
+                else:
+                    print("Failed to login. Wrong username or password")
+
+
+
 
 
 

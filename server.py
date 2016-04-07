@@ -1,8 +1,10 @@
 from GaloOnlineAPI import *
 import os
 
+
 #Define
 Sender = "Client"
+THIS = "Server"
 ServerIP = socket.gethostname()
 Port = 8000
 UsersPath = "./users/"
@@ -15,53 +17,10 @@ TimeOut = 2
 #EndDefine
 
 #Message Encodes
-SuccessMessage = SuccessMessage.encode()
-ErrorMessage = ErrorMessage.encode()
+
 #
 
-def CreateServerSocket():
-    try:
-        ServerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print("Socket Sucessfully Created!")
-        ServerSocket.bind((ServerIP, Port))
-        print("Socket binded Sucessfully")
-        return ServerSocket
-    except socket.error:
-        print("Unable to create Socket.")
 
-
-def WriteToSocket(ServerSocket, msg, address):
-    try:
-        ServerSocket.sendto(msg, address)
-        data = 0
-        i = 0
-        ServerSocket.settimeout(TimeOut)
-        while i < NumberOfTries:
-            data = ServerSocket.recvfrom(MessageMaxSize)
-            if data == 0:
-                ServerSocket.sendto(msg, address)
-                i += 1
-            else:
-                ServerSocket.settimeout(None)
-                break
-        UserEndPoint = data[1]
-        userMsg = data[0]
-        userMsg = userMsg.decode()
-        #  print(userMsg)
-
-        if userMsg == SuccessMessage.decode():
-            print("Message Successfully Sent. Received ACK from:", Sender +" " + UserEndPoint[0] + ":" +"%d", UserEndPoint[1])
-            return True
-        else:
-            print("Error on receiving ACK from client " + data[1][0])
-            return False
-    except socket.error:
-        print("Unable to send message to address: ", address)
-        return False
-
-
-def ReadFromSocket(ServerSocket):
-    return ServerSocket.recvfrom(MessageMaxSize)
 
 def CheckDir():
     if os.path.exists(UsersPath):
@@ -71,15 +30,15 @@ def CheckDir():
         return False
 
 
-def CreateAccount(name, password, accounts):
-    if os.path.isfile(UsersPath + name + FileExtension):
+def CreateAccount(name, password, Accounts):
+    if os.path.isfile(UsersPath + name + FileExtension) or name in Accounts:
         return False
     else:
         try:
             userfile = open(UsersPath + name + FileExtension, 'a+')
             userfile.write(password)
             userfile.close()
-            accounts[name] = password
+            Accounts[name] = password
             print("Account created!")
             #return accounts
         except IOError:
@@ -103,8 +62,8 @@ def LoadAccounts(Accounts):
             continue
 
 
-def Login(name, password):
-    if os.path.isfile(UsersPath + name + FileExtension):
+def Login(name, password, Accounts, LoggedInUsers, UserIP):
+    if os.path.isfile(UsersPath + name + FileExtension) or name in Accounts:
         try:
             userfile = open(UsersPath + name + FileExtension, 'r')
 
@@ -116,6 +75,7 @@ def Login(name, password):
 
             userfile.close()
             if password == passUser:
+                LoggedInUsers[name] = UserIP
                 return True
             else:
                 return False
@@ -132,12 +92,12 @@ def main():
     LoadAccounts(Accounts)
     print(Accounts)
     LoggedInUsers = {}
-    ServerSocket = CreateServerSocket()
+    ServerSocket = CreateSocket(THIS)
     print("Hosting @"+ServerIP)
     while 1:
         Data = ReadFromSocket(ServerSocket)
         UserIP = Data[1]
-        OpCode = Data[0].decode()
+        OpCode = Data[0]
         print("Mensagem recebida: ", OpCode)
         OpCode = OpCode.split()
         print(OpCode[0])
@@ -152,6 +112,15 @@ def main():
                 WriteToSocket(ServerSocket, SuccessMessage, UserIP)
                 #Accounts = Sucess
                 print(Accounts)
+        elif OpCode[0] == "LOG":
+            Success = Login(OpCode[1], OpCode[2], Accounts, LoggedInUsers, UserIP)
+            if Success:
+                WriteToSocket(ServerSocket, SuccessMessage, UserIP)
+                print("User " + OpCode[1] + " has logged in.")
+                print(LoggedInUsers)
+            else:
+                WriteToSocket(ServerSocket, ErrorMessage, UserIP)
+                print("User " + OpCode[1] + " has entered a wrong password./")
         else:
             continue
 
