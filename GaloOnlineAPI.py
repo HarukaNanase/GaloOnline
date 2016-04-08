@@ -40,12 +40,21 @@ def CreateSocket(THIS):
 def WriteToSocket(Socket, msg, address):
     try:
         msg = msg.encode()
-        Socket.sendto(msg, address)
+        Sent = Socket.sendto(msg, address)
         data = 0
         i = 0
-        Socket.settimeout(TimeOut)
+
         while i < NumberOfTries:
-            data = Socket.recvfrom(MessageMaxSize)
+            Socket.settimeout(TimeOut)
+            try:
+                data = Socket.recvfrom(MessageMaxSize)
+            except socket.error:
+                print("Unable to receive ACK from address: ", address)
+                i += 1
+                if i == 5:
+                    Socket.settimeout(None)
+                    return False
+                continue
             if data == 0:
                 Socket.sendto(msg, address)
                 i += 1
@@ -59,13 +68,15 @@ def WriteToSocket(Socket, msg, address):
 
         if userMsg == SuccessMessage.decode():
             print("Message Successfully Sent. Received ACK from:", UserEndPoint[0] + ":", UserEndPoint[1])
-            return True
+            return Sent
         else:
             print("Error on receiving ACK from " + data[1][0])
             return False
     except socket.error:
         print("Unable to send message to address: ", address)
         return False
+
+
 
 
 def ReadFromSocket(Socket):

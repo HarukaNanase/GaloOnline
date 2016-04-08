@@ -76,8 +76,9 @@ while(True):
     elif command == "/lista":
             Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
             Received = ReadFromSocket(ClientSocket)
-            print(sys.getsizeof("Packet de tamanho:", Received))
+            print("Lista de tamanho:", len(Received[0]))
             OnlineList = json.loads(Received[0])
+            print("Lista pos desencriptação:",sys.getsizeof(OnlineList))
             print(OnlineList)
 
     elif command == "/invite":

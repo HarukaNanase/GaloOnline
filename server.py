@@ -63,8 +63,8 @@ def main():
                 StateList[user] = State
             print(StateList)
             StateList = json.dumps(StateList)
-            print("O comprimento da lista é " , len(StateList))
-            WriteToSocket(ServerSocket, StateList, UserIP)
+            print("Tamanho da lista a enviar:", len(StateList))
+            print(WriteToSocket(ServerSocket, StateList, UserIP))
         else:
             continue
 
