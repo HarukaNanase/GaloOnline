@@ -76,9 +76,10 @@ while(True):
     elif command == "/lista":
             Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
             Received = ReadFromSocket(ClientSocket)
+            print(sys.getsizeof("Packet de tamanho:", Received))
             OnlineList = json.loads(Received[0])
-            print(sys.getsizeof(OnlineList))
             print(OnlineList)
+
     elif command == "/invite":
         PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")
 

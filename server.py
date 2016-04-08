@@ -56,15 +56,15 @@ def main():
                 WriteToSocket(ServerSocket, ErrorMessage, UserIP)
                 print("User " + OpCode[1] + " has entered a wrong password./")
         elif OpCode[0] == "LIST":
-            OnlineList = json.dumps(LoggedInUsers)
-            print("O comprimento da lista é " , len(OnlineList))
-            Packets = [OnlineList[i:i + 8] for i in range(0, len(OnlineList), 8)]
-            print(sys.getsizeof(OnlineList))
-            print(Packets)
-            WriteToSocket(ServerSocket, OnlineList, UserIP)
-
-
-
+            StateList = {}
+            for user in LoggedInUsers:
+                State = LoggedInUsers.get(user)
+                State = State[1]
+                StateList[user] = State
+            print(StateList)
+            StateList = json.dumps(StateList)
+            print("O comprimento da lista é " , len(StateList))
+            WriteToSocket(ServerSocket, StateList, UserIP)
         else:
             continue
 
