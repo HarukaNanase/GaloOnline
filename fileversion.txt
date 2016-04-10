@@ -30,3 +30,5 @@ V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - Andr
         Fixed List sending(username and state)         - 08/04/2016 01:05 - André Soares
         Fixed a bug with GaloOnlineAPI                 - 08/04/2016 23:48 - André Soares
         Started implementation of Packet-Slicer        - 08/04/2016 23:50 - André Soares
+
+V0.03 - Jogo do Galo fully working in JogoGalo.py      - 10/04/2016 17:42 - Fernando Moreira
