@@ -11,6 +11,7 @@ ErrorMessage = "ERR"
 MessageMaxSize = 256
 NumberOfTries = 5
 TimeOut = 2
+IntAllocationMemory = 7
 #EndDefine
 
 #Message Encodes
@@ -95,3 +96,20 @@ def ReadFromSocket(Socket):
             Socket.sendto(ErrorMessage, SenderEndPoint)
             return False
 
+
+def CheckMsgSize(msg):
+    if len(msg) > MessageMaxSize:
+        return (len(msg) // MessageMaxSize) + 1
+    else:
+        return 1
+
+
+def PacketLister(msg, ratio):
+    Packets = []
+    i = 0
+    read = 0
+    while read < (len(msg)):
+        Packets.append((i, msg[read:read+(MessageMaxSize - IntAllocationMemory - len(str(i)))]))
+        read += MessageMaxSize
+        i += 1
+    return Packets

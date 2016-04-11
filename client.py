@@ -6,7 +6,7 @@ import sys
 Sender = "Server"
 THIS = "Client"
 Version = "v0.02"
-ServerIP = "Balbadd"
+ServerIP = "Acer7745G"
 Port = 8000
 ServerAddress = (ServerIP, Port)
 ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
