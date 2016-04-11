@@ -1,4 +1,5 @@
 import socket
+import json
 #Define
 Sender = "Client"
 #THIS = "Server"
@@ -12,6 +13,7 @@ MessageMaxSize = 256
 NumberOfTries = 5
 TimeOut = 2
 IntAllocationMemory = 7
+JsonPrice = 2
 #EndDefine
 
 #Message Encodes
@@ -40,7 +42,7 @@ def CreateSocket(THIS):
 
 def WriteToSocket(Socket, msg, address):
     try:
-        msg = msg.encode()
+
         Sent = Socket.sendto(msg, address)
         data = 0
         i = 0
@@ -99,17 +101,18 @@ def ReadFromSocket(Socket):
 
 def CheckMsgSize(msg):
     if len(msg) > MessageMaxSize:
-        return (len(msg) // MessageMaxSize) + 1
+        return (len(msg) // MessageMaxSize + 1)
     else:
         return 1
 
 
-def PacketLister(msg, ratio):
+def PacketLister(msg):
     Packets = []
     i = 0
     read = 0
     while read < (len(msg)):
-        Packets.append((i, msg[read:read+(MessageMaxSize - IntAllocationMemory - len(str(i)))]))
-        read += MessageMaxSize
+        Packets.append((i, msg[read:read+(MessageMaxSize - IntAllocationMemory - len(str(i))+1)]))
+        Packets[i] = json.dumps(Packets[i])
+        read += MessageMaxSize - IntAllocationMemory - len(str(i)) + 2
         i += 1
     return Packets
