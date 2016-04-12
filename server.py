@@ -64,6 +64,12 @@ def main():
             print(StateList)
             print("Tamanho da lista a enviar:", len(StateList))
             print(SendPackets(ServerSocket, StateList, UserIP))
+        elif OpCode[0] == "INV":
+            User1 = OpCode[1]
+            User2 = OpCode[2]
+
+
+
         else:
             continue
 

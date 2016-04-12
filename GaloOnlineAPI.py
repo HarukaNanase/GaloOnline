@@ -1,5 +1,7 @@
 import socket
 import json
+
+
 #Define
 Sender = "Client"
 #THIS = "Server"
@@ -20,12 +22,11 @@ SuccessMessage = SuccessMessage.encode()
 ErrorMessage = ErrorMessage.encode()
 #
 
-
+#Creates a socket for a client or a server depending on THIS
 def CreateSocket(THIS):
     if(THIS == "Client"):
         try:
-            ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            return ClientSocket
+            return socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error:
             print("Error creating Client Socket.")
     else:
