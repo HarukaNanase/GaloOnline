@@ -75,11 +75,8 @@ while(True):
                     print("Failed to login. Wrong username or password")
     elif command == "/lista":
             Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
-            Received = ReadFromSocket(ClientSocket)
-            print("Lista de tamanho:", len(Received[0]))
-            OnlineList = json.loads(Received[0])
-            print("Lista pos desencriptação:",sys.getsizeof(OnlineList))
-            print(OnlineList)
+            Received = ReadPackets(ClientSocket)
+            print(Received)
 
     elif command == "/invite":
         PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")

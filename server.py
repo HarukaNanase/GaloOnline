@@ -13,7 +13,7 @@ UsersPath = "./users/"
 FileExtension = ".txt"
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
-MessageMaxSize = 256
+
 NumberOfTries = 5
 TimeOut = 2
 #EndDefine
@@ -62,9 +62,8 @@ def main():
                 State = State[1]
                 StateList[user] = State
             print(StateList)
-            StateList = json.dumps(StateList)
             print("Tamanho da lista a enviar:", len(StateList))
-            print(WriteToSocket(ServerSocket, StateList, UserIP))
+            print(SendPackets(ServerSocket, StateList, UserIP))
         else:
             continue
 

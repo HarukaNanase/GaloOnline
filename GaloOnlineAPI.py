@@ -5,8 +5,7 @@ Sender = "Client"
 #THIS = "Server"
 ServerIP = socket.gethostname()
 Port = 8000
-#UsersPath = "./users/"
-#FileExtension = ".txt"
+
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 MessageMaxSize = 256
@@ -103,19 +102,40 @@ def PacketLister(msg):
     Packets = []
     i = 0
     read = 0
+    msg = json.dumps(msg)
     while read < (len(msg)):
-        Packets.append((i, msg[read:read+(MessageMaxSize - IntAllocationMemory - len(str(i))+1)]))
+        Packets.append((i, msg[read:read+(MessageMaxSize - IntAllocationMemory - len(str(i)) - 1)]))
         Packets[i] = json.dumps(Packets[i])
-        read += MessageMaxSize - IntAllocationMemory - len(str(i)) + 2
+        print(len(Packets[i]))
+        read += MessageMaxSize - IntAllocationMemory - len(str(i))
         i += 1
-    Packets.append((len(Packets) - 1))   #Coloca no fim da lista, o numero de packets a enviar
+    Packets.append(len(Packets))   #Coloca no fim da lista, o numero de packets a enviar
     return Packets
+
 
 def SendPackets(Socket,msg,address):
     Sent = 0
     Packets = PacketLister(msg)
-    Sent += WriteToSocket(Socket,Packets[len(Packets)-1].encode(),address)
-    for Packet in Packets[:len(Packets)-2]:
-        Sent += WriteToSocket(Socket,Packet,address)
-
+    Sent += WriteToSocket(Socket,str(Packets[len(Packets)-1]),address)
+    Packets = Packets[:len(Packets)-1]
+    print(Packets)
+    for Packet in Packets:
+        Sent += WriteToSocket(Socket, Packet ,address)
+        print('Packet enviado e confirmado. A enviar o proximo.')
     return Sent
+
+
+def ReadPackets(Socket):
+    Packets = []
+    PacketsToReceive = ReadFromSocket(Socket)
+    print(PacketsToReceive[0])
+    i = 0
+    while i < int(PacketsToReceive[0]):
+        Packets.append(ReadFromSocket(Socket)[0])
+        Packets[i] = Packets[i]
+        Packets[i] = json.loads(Packets[i])
+        Packets[i] = Packets[i][1]
+        print("Packet Recebido com sucesso.")
+        i += 1
+
+    return Packets
