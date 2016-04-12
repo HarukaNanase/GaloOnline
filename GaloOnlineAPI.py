@@ -42,7 +42,7 @@ def CreateSocket(THIS):
 
 def WriteToSocket(Socket, msg, address):
     try:
-
+        msg = msg.encode()
         Sent = Socket.sendto(msg, address)
         data = 0
         i = 0
@@ -99,13 +99,6 @@ def ReadFromSocket(Socket):
             return False
 
 
-def CheckMsgSize(msg):
-    if len(msg) > MessageMaxSize:
-        return (len(msg) // MessageMaxSize + 1)
-    else:
-        return 1
-
-
 def PacketLister(msg):
     Packets = []
     i = 0
@@ -115,4 +108,14 @@ def PacketLister(msg):
         Packets[i] = json.dumps(Packets[i])
         read += MessageMaxSize - IntAllocationMemory - len(str(i)) + 2
         i += 1
+    Packets.append((len(Packets) - 1))   #Coloca no fim da lista, o numero de packets a enviar
     return Packets
+
+def SendPackets(Socket,msg,address):
+    Sent = 0
+    Packets = PacketLister(msg)
+    Sent += WriteToSocket(Socket,Packets[len(Packets)-1].encode(),address)
+    for Packet in Packets[:len(Packets)-2]:
+        Sent += WriteToSocket(Socket,Packet,address)
+
+    return Sent
