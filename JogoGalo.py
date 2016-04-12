@@ -134,4 +134,5 @@ def readPlay(): #reads where the player wants to play and checks if is a valid n
 
 
 #Fucntion that starts the file! Its like 'MAIN'
-readPlay()
+if __name__ == '__main__':
+    readPlay()
