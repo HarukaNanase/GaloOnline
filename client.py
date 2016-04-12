@@ -9,7 +9,7 @@ Version = "v0.02"
 ServerIP = "Acer7745G"
 Port = 8000
 ServerAddress = (ServerIP, Port)
-ClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+ClientSocket = CreateSocket(THIS)
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 #EndDefine
