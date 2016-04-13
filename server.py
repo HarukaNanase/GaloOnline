@@ -25,6 +25,7 @@ TimeOut = 2
 def main():
     CheckDir()
     Accounts = {}
+    Jogos = []
     LoadAccounts(Accounts)
     print(Accounts)
     LoggedInUsers = {}
@@ -65,8 +66,30 @@ def main():
             print("Tamanho da lista a enviar:", len(StateList))
             print(SendPackets(ServerSocket, StateList, UserIP))
         elif OpCode[0] == "INV":
+
             User1 = OpCode[1]
             User2 = OpCode[2]
+            User1IP = LoggedInUsers.get(User1)[0]
+            User2IP = LoggedInUsers.get(User2)[0]
+            if (LoggedInUsers.get(User2)[1] == "Playing"):
+                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+                continue
+            OpCode = OpCode[0] + " " + OpCode[1] + " " + OpCode[2]
+            Sent = WriteToSocket(ServerSocket, OpCode, User2IP)
+            Read = ReadFromSocket(ServerSocket)
+
+            if Read[0] == SuccessMessage:
+                Sent = WriteToSocket(ServerSocket, SuccessMessage, User1IP)
+                LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
+                LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
+                Jogos.append((len(Jogos),(User1,User2)))
+                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User1IP)
+                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User2IP)
+                continue
+            else:
+                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+                continue
+
 
 
 

@@ -4,45 +4,34 @@ import sys
 import select
 import threading
 
+
 #Define
 Sender = "Server"
 THIS = "Client"
 Version = "v0.02"
-ServerIP = "Acer7745G"
+ServerIP = "Balbadd"
 Port = 8000
 ServerAddress = (ServerIP, Port)
 ClientSocket = CreateSocket(THIS)
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
-Inputs = [ClientSocket, sys.stdin]
+
 #EndDefine
 
 
 Console = False
 Socket = False
 
-#Message Encodes
-SuccessMessage = SuccessMessage.encode()
-ErrorMessage = ErrorMessage.encode()
-#
- _
+
+Username = ""
+GameRoom = -1
 
 print("Bem vindo ao cliente do GaloOnline\nVersão:"+Version+"\nHave Fun!\n")
 
 print("Escreva /registo para se registar!\nSe já se encontrar registado, utilize /login para efectuar o seu login")
 
-
 while(True):
-    print("Introduza o seu comando:")
-    ins,outs,exs = select.select(Inputs, [], [])
-    for i in ins:
-        if i == sys.stdin:
-            Console = True
-            command = sys.stdin.readline()
-        elif i == ClientSocket:
-            Socket = True
-            msg, addr = ClientSocket.recvfrom(1024)
-    if(Console == True):
+        command = input("Introduza o seu comando:")
         if command == "/registo":
             print("Irá proceder ao registo de uma conta no GaloOnline.\nAo se registar está a aceitar os termos"
                   " e condições propostas.")
@@ -86,6 +75,7 @@ while(True):
                 else:
                     if(Answer[0] == "ACK"):
                         print("Welcome to GaloOnline. Here's the menu for the game options")
+                        Username = username
                     else:
                         print("Failed to login. Wrong username or password")
         elif command == "/lista":
@@ -95,5 +85,41 @@ while(True):
 
         elif command == "/invite":
             PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")
+            InviteMessage = "INV " + Username + " " + PlayerNr2
+            Sent = WriteToSocket(ClientSocket, InviteMessage, ServerAddress)
+            Read = ReadFromSocket(ClientSocket)
+
+            if Read[0] == SuccessMessage:
+                print("Irá ser colocado num jogo com o jogador: " + PlayerNr2)
+                #TODO
+                Read = ReadFromSocket(ClientSocket)
+                GameRoom = Read[0]
+                print("Sala do jogo: ", GameRoom)
+                continue
+            else:
+                print("O convite foi recusado.")
+                continue
+
+        elif command == "/inviteon":
+            Invite = ReadFromSocket(ClientSocket)
+            print(Invite)
+            EndPointIP = Invite[1]
+            Invite = Invite[0].split()
+            if Invite[0] == "INV":
+                if Invite[2] == Username:
+                    print("Foi convidado para jogar pelo jogador: " + Invite[1])
+                    accept = ""
+                    while accept != "Y" or accept != "y" or accept != "N" or accept != "n":
+                        accept = input("Deseja Aceitar? Y/N:")
+                        if accept == "N" or accept == "n" or accept == "Y" or accept == "y":
+                            break
+
+                    if accept == "y" or accept == "Y":
+                        Sent = WriteToSocket(ClientSocket, SuccessMessage, EndPointIP)
+                        Read = ReadFromSocket(ClientSocket)
+                        GameRoom = Read[0]
+                        print("Sala de jogo: ", GameRoom)
+                    else:
+                        Sent = WriteToSocket(ClientSocket, ErrorMessage, EndPointIP)
 
 
