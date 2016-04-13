@@ -126,11 +126,6 @@ while(True):
                                 print("Jogada minha")
                                 turno += 1
 
-
-
-
-
-
                             else:
                                 print("Awaiting the other players play...")
                                 Read = ReadFromSocket(ClientSocket)
