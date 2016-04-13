@@ -1,3 +1,9 @@
+def CurrentBoard(Board):
+    print("\n", Board.get("0"),"|",Board.get("1"),"|",Board.get("2"),
+          "\n---+---+---\n",Board.get("3"),"|",Board.get("4"),"|",Board.get("5"),
+          "\n---+---+---\n",Board.get("6"),"|",Board.get("7"),"|",Board.get("8"))
+
+
 def NewBoard():
     i = 0
     Board = {}
@@ -29,11 +35,12 @@ def CheckWinner(Board):
 
 
 def ReadPlay(Board):
-    play = input("Introduza a sua jogada (1-9): ")
-    if int(play) not in (1, 2, 3, 4, 5, 6, 7, 8, 9):
-        print("Jogada Invalida (Não introduziu um numero de 1 a 9).")
+    play = input("Introduza a sua jogada (0-8): ")
+
+    if int(play) not in (0, 1, 2, 3, 4, 5, 6, 7, 8):
+        print("Jogada Invalida (Não introduziu um numero de 0 a 8).")
         return False
-    if Board.get(play) not in (1, 2, 3, 4, 5, 6, 7, 8, 9):
+    if Board.get(play) not in (0, 1, 2, 3, 4, 5, 6, 7, 8):
         print("Espaço ocupado.")
         return False
     else:

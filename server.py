@@ -98,11 +98,12 @@ def main():
             Player2 = Jogos.get(GameRoomID)[1]
             Player1IP = LoggedInUsers.get(Player1)[0]
             Player2IP = LoggedInUsers.get(Player2)[0]
-
             MessageForClient = "PLAY " + GameRoomID + " " + PlayPosition
 
-            WriteToSocket(ServerSocket,MessageForClient,Player2)
-
+            if(UserIP == Player1IP):
+                WriteToSocket(ServerSocket, MessageForClient, Player2)
+            else:
+                WriteToSocket(ServerSocket, MessageForClient, Player1)
 
         else:
             continue
