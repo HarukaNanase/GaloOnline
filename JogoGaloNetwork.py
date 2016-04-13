@@ -30,10 +30,10 @@ def CheckWinner(Board):
 
 def ReadPlay(Board):
     play = input("Introduza a sua jogada (1-9): ")
-    if int(play) not in (1, 2, 3, 4, 5, 6, 7, 8):
+    if int(play) not in (1, 2, 3, 4, 5, 6, 7, 8, 9):
         print("Jogada Invalida (Não introduziu um numero de 1 a 9).")
         return False
-    if Board.get(play) not in (1, 2, 3, 4, 5, 6, 7, 8):
+    if Board.get(play) not in (1, 2, 3, 4, 5, 6, 7, 8, 9):
         print("Espaço ocupado.")
         return False
     else:
