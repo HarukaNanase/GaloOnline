@@ -25,7 +25,7 @@ TimeOut = 2
 def main():
     CheckDir()
     Accounts = {}
-    Jogos = []
+    Jogos = {}
     LoadAccounts(Accounts)
     print(Accounts)
     LoggedInUsers = {}
@@ -82,7 +82,8 @@ def main():
                 Sent = WriteToSocket(ServerSocket, SuccessMessage, User1IP)
                 LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
                 LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
-                Jogos.append((len(Jogos),(User1,User2)))
+                Jogos[len(Jogos)] = (User1,User2)
+                print(Jogos)
                 Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User1IP)
                 Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User2IP)
                 continue
@@ -90,7 +91,17 @@ def main():
                 Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
                 continue
 
+        elif OpCode[0] == "PLAY":
+            GameRoomID = OpCode[1]
+            PlayPosition = OpCode[2]
+            Player1 = Jogos.get(GameRoomID)[0]
+            Player2 = Jogos.get(GameRoomID)[1]
+            Player1IP = LoggedInUsers.get(Player1)[0]
+            Player2IP = LoggedInUsers.get(Player2)[0]
 
+            MessageForClient = "PLAY " + GameRoomID + " " + PlayPosition
+
+            WriteToSocket(ServerSocket,MessageForClient,Player2)
 
 
         else:

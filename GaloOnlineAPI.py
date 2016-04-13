@@ -74,12 +74,11 @@ def WriteToSocket(Socket, msg, address):
             return Sent
         else:
             print("Error on receiving ACK from " + data[1][0])
+            Socket.sendto("ERR".encode(),data[1][0])
             return False
     except socket.error:
         print("Unable to send message to address: ", address)
         return False
-
-
 
 
 def ReadFromSocket(Socket):

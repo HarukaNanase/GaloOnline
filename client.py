@@ -1,15 +1,10 @@
 from GaloOnlineAPI import *
-import json
-import sys
-import select
-import threading
-
+from JogoGalo import *
 
 #Define
 Sender = "Server"
 THIS = "Client"
 Version = "v0.02"
-ServerIP = "Balbadd"
 Port = 8000
 ServerAddress = (ServerIP, Port)
 ClientSocket = CreateSocket(THIS)
@@ -95,12 +90,16 @@ while(True):
                 Read = ReadFromSocket(ClientSocket)
                 GameRoom = Read[0]
                 print("Sala do jogo: ", GameRoom)
-                continue
+                player = "1"
+                turno = 1
+                if turno//int(player) == 1:
+                    readPlay()
             else:
                 print("O convite foi recusado.")
                 continue
 
         elif command == "/inviteon":
+            print("Now awaiting an invite from a player...")
             Invite = ReadFromSocket(ClientSocket)
             print(Invite)
             EndPointIP = Invite[1]
@@ -119,7 +118,37 @@ while(True):
                         Read = ReadFromSocket(ClientSocket)
                         GameRoom = Read[0]
                         print("Sala de jogo: ", GameRoom)
+                        resetBoard()
+                        player = "2"
+                        turno = 1
+                        while True:
+                            if turno // int(player) == 0:
+                                print("Jogada minha")
+                                turno += 1
+
+
+
+
+
+
+                            else:
+                                print("Awaiting the other players play...")
+                                Read = ReadFromSocket(ClientSocket)
+                                Read = Read[0]
+                                Read.split()
+                                if Read[0] == "PLAY" and Read[1] == GameRoom:
+                                    print("O jogador jogou na posiçao: ", Read[2])
+
+
+
+
+
+
+
+
                     else:
                         Sent = WriteToSocket(ClientSocket, ErrorMessage, EndPointIP)
+                        continue
+
 
 
