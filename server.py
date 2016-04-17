@@ -92,19 +92,23 @@ def main():
                 continue
 
         elif OpCode[0] == "PLAY":
-            GameRoomID = OpCode[1]
+            GameRoomID = int(OpCode[1])
             PlayPosition = OpCode[2]
+            print(Jogos.get(GameRoomID))
             Player1 = Jogos.get(GameRoomID)[0]
             Player2 = Jogos.get(GameRoomID)[1]
             Player1IP = LoggedInUsers.get(Player1)[0]
             Player2IP = LoggedInUsers.get(Player2)[0]
-            MessageForClient = "PLAY " + GameRoomID + " " + PlayPosition
-
+            print(Player2IP)
+            MessageForClient = "PLAY " + str(GameRoomID) + " " + PlayPosition
             if(UserIP == Player1IP):
-                WriteToSocket(ServerSocket, MessageForClient, Player2)
+                WriteToSocket(ServerSocket, MessageForClient, Player2IP)
             else:
-                WriteToSocket(ServerSocket, MessageForClient, Player1)
+                WriteToSocket(ServerSocket, MessageForClient, Player1IP)
 
+        elif (OpCode[0] == "WIN" or OpCode[0] == "LOSE") and OpCode[1] in Jogos:
+            Player1 = Jogos.get(OpCode[1])[0]
+            Player2 = Jogos.get(OpCode[1])[1]
         else:
             continue
 

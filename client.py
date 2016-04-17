@@ -1,5 +1,5 @@
 from GaloOnlineAPI import *
-from JogoGalo import *
+from JogoGaloNetwork import *
 
 #Define
 Sender = "Server"
@@ -91,9 +91,33 @@ while(True):
                 GameRoom = Read[0]
                 print("Sala do jogo: ", GameRoom)
                 player = "1"
+                Symbol = "X"
                 turno = 1
-                if turno//int(player) == 1:
-                    readPlay()
+                Board = NewBoard()
+                while CheckWinner(Board) == "False":
+                    if turno%2 != 0:
+                        CurrentBoard(Board)
+                        Jogada = ReadPlay(Board)
+                        Play(Board, Jogada, Symbol)
+                        Msg = "PLAY " + GameRoom + " " + Jogada
+                        WriteToSocket(ClientSocket,Msg,ServerAddress)
+                        turno += 1
+                    else:
+                        CurrentBoard(Board)
+                        Read = ReadFromSocket(ClientSocket)
+                        Read = Read[0].split()
+                        if Read[0] == "PLAY" and Read[1] == GameRoom:
+                            Play(Board, Read[2], "O")
+                            CurrentBoard(Board)
+                            print("O jogador adversário jogou na posiçao: ", Read[2])
+                            turno += 1
+                CurrentBoard(Board)
+                Winner = CheckWinner(Board)
+                if(Winner == Symbol):
+                    Sent = WriteToSocket(ClientSocket,"LOSE",ServerAddress)
+                else:
+                    Sent = WriteToSocket(ClientSocket,"WIN",ServerAddress)
+
             else:
                 print("O convite foi recusado.")
                 continue
@@ -118,23 +142,36 @@ while(True):
                         Read = ReadFromSocket(ClientSocket)
                         GameRoom = Read[0]
                         print("Sala de jogo: ", GameRoom)
-                        resetBoard()
                         player = "2"
                         turno = 1
-                        while True:
-                            if turno // int(player) == 0:
-                                print("Jogada minha")
+                        Symbol = "O"
+                        Board = NewBoard()
+                        while(CheckWinner(Board) != True):
+                            if turno % 2 != 0:
+                                CurrentBoard(Board)
+                                print("Awaiting the other player's turn")
+                                Read = ReadFromSocket(ClientSocket)
+                                Read = Read[0].split()
+                                if Read[0] == "PLAY" and Read[1] == GameRoom:
+                                    Play(Board, Read[2], "X")
+                                    CurrentBoard(Board)
+                                    print("O jogador adversário jogou na posiçao: ", Read[2])
+                                    turno += 1
+                            else:
+                                print("It's your turn to play")
+                                CurrentBoard(Board)
+                                Jogada = ReadPlay(Board)
+                                Play(Board, Jogada, Symbol)
+                                Msg = "PLAY " + GameRoom + " " + Jogada
+                                WriteToSocket(ClientSocket, Msg, ServerAddress)
                                 turno += 1
 
-                            else:
-                                print("Awaiting the other players play...")
-                                Read = ReadFromSocket(ClientSocket)
-                                Read = Read[0]
-                                Read.split()
-                                if Read[0] == "PLAY" and Read[1] == GameRoom:
-                                    print("O jogador jogou na posiçao: ", Read[2])
-
-
+                        Read = ReadFromSocket(ClientSocket)
+                        Read = Read[0].split()
+                        if(Read[0] == "WIN" and Read[1] == GameRoom):
+                            print("You won the game!")
+                        else:
+                            print("You lost the game!")
 
 
 
