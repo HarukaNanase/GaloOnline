@@ -139,3 +139,12 @@ def ReadPackets(Socket):
         i += 1
 
     return Packets
+
+
+def CheckLoggedIn(LoggedInUsers, UserIP):
+    a = LoggedInUsers.values()
+    for b in a:
+        if b[0] == UserIP:
+            return True
+    return False
+

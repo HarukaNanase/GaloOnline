@@ -25,10 +25,11 @@ TimeOut = 2
 def main():
     CheckDir()
     Accounts = {}
-    Jogos = {}
+    Jogos = []
     LoadAccounts(Accounts)
     print(Accounts)
     LoggedInUsers = {}
+
     ServerSocket = CreateSocket(THIS)
     print("Hosting @"+ServerIP)
     while 1:
@@ -38,6 +39,7 @@ def main():
         print("Mensagem recebida: ", OpCode)
         OpCode = OpCode.split()
         print(OpCode[0])
+
         if OpCode[0] == "REG":
             Success = CreateAccount(OpCode[1], OpCode[2], Accounts)
             if Success == False:
@@ -45,7 +47,7 @@ def main():
                 WriteToSocket(ServerSocket, ErrorMessage, UserIP)
             else:
                 WriteToSocket(ServerSocket, SuccessMessage, UserIP)
-                #Accounts = Sucess
+                # Accounts = Sucess
                 print(Accounts)
         elif OpCode[0] == "LOG":
             Success = Login(OpCode[1], OpCode[2], Accounts, LoggedInUsers, UserIP)
@@ -56,58 +58,44 @@ def main():
             else:
                 WriteToSocket(ServerSocket, ErrorMessage, UserIP)
                 print("User " + OpCode[1] + " has entered a wrong password./")
-        elif OpCode[0] == "LIST":
-            StateList = {}
-            for user in LoggedInUsers:
-                State = LoggedInUsers.get(user)
-                State = State[1]
-                StateList[user] = State
-            print(StateList)
-            print("Tamanho da lista a enviar:", len(StateList))
-            print(SendPackets(ServerSocket, StateList, UserIP))
-        elif OpCode[0] == "INV":
 
-            User1 = OpCode[1]
-            User2 = OpCode[2]
-            User1IP = LoggedInUsers.get(User1)[0]
-            User2IP = LoggedInUsers.get(User2)[0]
-            if (LoggedInUsers.get(User2)[1] == "Playing"):
-                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
-                continue
-            OpCode = OpCode[0] + " " + OpCode[1] + " " + OpCode[2]
-            Sent = WriteToSocket(ServerSocket, OpCode, User2IP)
-            Read = ReadFromSocket(ServerSocket)
+        if CheckLoggedIn(LoggedInUsers, UserIP):
+                if OpCode[0] == "LIST" and CheckLoggedIn(LoggedInUsers, UserIP):
+                    StateList = {}
+                    for user in LoggedInUsers:
+                        State = LoggedInUsers.get(user)
+                        State = State[1]
+                        StateList[user] = State
+                        print(StateList)
+                        print("Tamanho da lista a enviar:", len(StateList))
+                        print(SendPackets(ServerSocket, StateList, UserIP))
+                elif OpCode[0] == "INV":
 
-            if Read[0] == SuccessMessage:
-                Sent = WriteToSocket(ServerSocket, SuccessMessage, User1IP)
-                LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
-                LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
-                Jogos[len(Jogos)] = (User1,User2)
-                print(Jogos)
-                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User1IP)
-                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User2IP)
-                continue
-            else:
-                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
-                continue
+                    User1 = OpCode[1]
+                    User2 = OpCode[2]
+                    User1IP = LoggedInUsers.get(User1)[0]
+                    User2IP = LoggedInUsers.get(User2)[0]
+                    if (LoggedInUsers.get(User2)[1] == "Playing"):
+                        Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+                        continue
+                    OpCode = OpCode[0] + " " + OpCode[1] + " " + OpCode[2]
+                    Sent = WriteToSocket(ServerSocket, OpCode, User2IP)
+                    Read = ReadFromSocket(ServerSocket)
 
-        elif OpCode[0] == "PLAY":
-            GameRoomID = OpCode[1]
-            PlayPosition = OpCode[2]
-            Player1 = Jogos.get(GameRoomID)[0]
-            Player2 = Jogos.get(GameRoomID)[1]
-            Player1IP = LoggedInUsers.get(Player1)[0]
-            Player2IP = LoggedInUsers.get(Player2)[0]
-            MessageForClient = "PLAY " + GameRoomID + " " + PlayPosition
-
-            if(UserIP == Player1IP):
-                WriteToSocket(ServerSocket, MessageForClient, Player2)
-            else:
-                WriteToSocket(ServerSocket, MessageForClient, Player1)
-
+                    if Read[0] == SuccessMessage:
+                        Sent = WriteToSocket(ServerSocket, SuccessMessage, User1IP)
+                        LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
+                        LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
+                        Jogos.append((len(Jogos), (User1, User2)))
+                        Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User1IP)
+                        Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User2IP)
+                        continue
+                    else:
+                        Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+                        continue
         else:
-            continue
 
+            continue
 
 if __name__ == '__main__':
     main()
