@@ -109,6 +109,15 @@ def main():
         elif (OpCode[0] == "WIN" or OpCode[0] == "LOSE") and OpCode[1] in Jogos:
             Player1 = Jogos.get(OpCode[1])[0]
             Player2 = Jogos.get(OpCode[1])[1]
+            Player1IP = LoggedInUsers.get(Player1)[0]
+            Player2IP = LoggedInUsers.get(Player2)[0]
+
+            if(UserIP == Player1IP):
+                WriteToSocket(ServerSocket, OpCode[0], Player2IP)
+            else:
+                WriteToSocket(ServerSocket, OpCode[0], Player1IP)
+
+
         else:
             continue
 

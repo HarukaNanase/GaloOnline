@@ -13,14 +13,9 @@ ErrorMessage = "ERR"
 
 #EndDefine
 
-
-Console = False
-Socket = False
-
-
 Username = ""
 GameRoom = -1
-
+LoggedIn = False
 print("Bem vindo ao cliente do GaloOnline\nVersão:"+Version+"\nHave Fun!\n")
 
 print("Escreva /registo para se registar!\nSe já se encontrar registado, utilize /login para efectuar o seu login")
@@ -71,14 +66,15 @@ while(True):
                     if(Answer[0] == "ACK"):
                         print("Welcome to GaloOnline. Here's the menu for the game options")
                         Username = username
+                        LoggedIn = True
                     else:
                         print("Failed to login. Wrong username or password")
-        elif command == "/lista":
+        elif command == "/lista" and LoggedIn:
                 Sent = WriteToSocket(ClientSocket, "LIST", ServerAddress)
                 Received = ReadPackets(ClientSocket)
                 print(Received)
 
-        elif command == "/invite":
+        elif command == "/invite" and LoggedIn:
             PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")
             InviteMessage = "INV " + Username + " " + PlayerNr2
             Sent = WriteToSocket(ClientSocket, InviteMessage, ServerAddress)
@@ -114,15 +110,16 @@ while(True):
                 CurrentBoard(Board)
                 Winner = CheckWinner(Board)
                 if(Winner == Symbol):
-                    Sent = WriteToSocket(ClientSocket,"LOSE",ServerAddress)
+                    Sent = WriteToSocket(ClientSocket,"LOSE" + " " + GameRoom,ServerAddress)
+                    print("Parabens! Ganhou o jogo.")
                 else:
-                    Sent = WriteToSocket(ClientSocket,"WIN",ServerAddress)
-
+                    Sent = WriteToSocket(ClientSocket,"WIN" + " " + GameRoom ,ServerAddress)
+                    print("Para a proxima corre melhor!")
             else:
                 print("O convite foi recusado.")
                 continue
 
-        elif command == "/inviteon":
+        elif command == "/inviteon" and LoggedIn:
             print("Now awaiting an invite from a player...")
             Invite = ReadFromSocket(ClientSocket)
             print(Invite)
@@ -146,7 +143,7 @@ while(True):
                         turno = 1
                         Symbol = "O"
                         Board = NewBoard()
-                        while(CheckWinner(Board) != True):
+                        while(CheckWinner(Board) == "False"):
                             if turno % 2 != 0:
                                 CurrentBoard(Board)
                                 print("Awaiting the other player's turn")
@@ -172,11 +169,6 @@ while(True):
                             print("You won the game!")
                         else:
                             print("You lost the game!")
-
-
-
-
-
 
                     else:
                         Sent = WriteToSocket(ClientSocket, ErrorMessage, EndPointIP)
