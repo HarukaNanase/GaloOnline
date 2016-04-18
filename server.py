@@ -127,6 +127,8 @@ def main():
             User1IP = LoggedInUsers.get(User1)[0]
             User2IP = LoggedInUsers.get(User2)[0]
 
+            Sent = WriteToSocket()
+
 
 
 
