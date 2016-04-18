@@ -32,3 +32,13 @@ V0.02 - Implementation of Socket System in Server.py   - 05/04/2016 02:25 - Andr
         Started implementation of Packet-Slicer        - 08/04/2016 23:50 - André Soares
 
 V0.03 - Jogo do Galo fully working in JogoGalo.py      - 10/04/2016 17:42 - Fernando Moreira
+
+v0.04 - Adapted JogoGalo to JogoGaloNetwork           - 13/04/2016 14:36 - André Soares
+        Re-made some of the client functions          - 13/04/2016 14:50 - André Soares
+        Finished Packet-Slicer in GaloOnlineAPI       - 13/04/2016 16:42 - André Soares
+
+v0.05 - Fixed a lot of bugs in server and client      - 14/04/2016 15:36 - André Soares
+        No more empty messages crashing the server    - 14/04/2016 15:38 - André Soares
+        Implemented JogoGaloNetwork into Client       - 14/04/2016 16:04 - André Soares
+
+v0.06 - Finished last details and menu in Client      - 18/04/2016 17:10 - André Soares
