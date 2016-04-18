@@ -57,15 +57,15 @@ def main():
             print(StateList)
             print("Tamanho da lista a enviar:", len(StateList))
             print(SendPackets(ServerSocket, StateList, UserIP))
+
         elif OpCode[0] == "INV":
 
             User1 = OpCode[1]
             User1IP = LoggedInUsers.get(User1)[0]
-            if (not CheckLogin(LoggedInUsers, OpCode[0])):
-                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
-                continue
+      #      if (not CheckLogin(LoggedInUsers, OpCode[0])):
+      #          Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+      #          continue
             User2 = OpCode[2]
-
             User2IP = LoggedInUsers.get(User2)[0]
 
             print(User1IP)
@@ -100,6 +100,7 @@ def main():
             Player2 = Jogos.get(int(OpCode[1]))[1]
             Player1IP = LoggedInUsers.get(Player1)[0]
             Player2IP = LoggedInUsers.get(Player2)[0]
+            print(Player2IP)
             Sent = WriteToSocket(ServerSocket, SuccessMessage, Player1IP)
             print(Sent)
             Sent = WriteToSocket(ServerSocket, SuccessMessage, Player2IP)
@@ -120,16 +121,6 @@ def main():
                 print(Jogos)
                 Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User1IP)
                 Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User2IP)
-
-        elif (OpCode[0] == "DENY"):
-            User1 = OpCode[1]
-            User2 = OpCode[2]
-            User1IP = LoggedInUsers.get(User1)[0]
-            User2IP = LoggedInUsers.get(User2)[0]
-
-            Sent = WriteToSocket()
-
-
 
 
         elif (OpCode[0] == "INVON"):
