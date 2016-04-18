@@ -67,3 +67,8 @@ def Login(name, password, Accounts, LoggedInUsers, UserIP):
     else:
         return False
 
+def CheckLogin(LoggedInUsers, User):
+    for a in LoggedInUsers:
+        if a == User:
+            return True
+    return False

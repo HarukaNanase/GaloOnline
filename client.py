@@ -5,12 +5,12 @@ from JogoGaloNetwork import *
 Sender = "Server"
 THIS = "Client"
 Version = "v0.02"
-Port = 8000
+
 ServerAddress = (ServerIP, Port)
 ClientSocket = CreateSocket(THIS)
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
-
+comandos = ["/login","/registo","/invite","/inviteon","/lista"]
 #EndDefine
 
 Username = ""
@@ -21,6 +21,18 @@ print("Bem vindo ao cliente do GaloOnline\nVersão:"+Version+"\nHave Fun!\n")
 print("Escreva /registo para se registar!\nSe já se encontrar registado, utilize /login para efectuar o seu login")
 
 while(True):
+        if LoggedIn == False:
+            print("")
+            print("Lista de comandos:")
+            print("/login - Efectue o login")
+            print("/registo - Efectue o registo")
+
+        if LoggedIn == True:
+            print("")
+            print("/invite - Convide um jogador para jogar consigo! (Só funciona após o login")
+            print("/lista - Peça a lista de jogadores e os seus estados")
+            print("/inviteon - Entre em modo de ser convidado")
+
         command = input("Introduza o seu comando:")
         if command == "/registo" and not LoggedIn:
             print("Irá proceder ao registo de uma conta no GaloOnline.\nAo se registar está a aceitar os termos"
@@ -53,6 +65,9 @@ while(True):
         if command == "/login" and not LoggedIn:
             username = input('Introduza o seu username:')
             password= input('Introduza a sua password:')
+            if(username == "" or password == ""):
+                print("Introduziu um username ou password invalidos!")
+                continue
             MsgToSend = "LOG " + username + " " + password
             Sent = WriteToSocket(ClientSocket, MsgToSend, ServerAddress)
             if Sent == 0:
@@ -76,6 +91,11 @@ while(True):
 
         elif command == "/invite" and LoggedIn:
             PlayerNr2 = input("Introduza o nome do jogador que deseja convidar:")
+            if PlayerNr2 == "":
+                print("Introduziu um nome invalido! Tente novamente.")
+                continue
+            while PlayerNr2 == Username:
+                    PlayerNr2 = input("Não pode convidar-se a si proprio. Introduza outro nome:")
             InviteMessage = "INV " + Username + " " + PlayerNr2
             Sent = WriteToSocket(ClientSocket, InviteMessage, ServerAddress)
             Read = ReadFromSocket(ClientSocket)
@@ -92,6 +112,7 @@ while(True):
                 Board = NewBoard()
                 while CheckWinner(Board) == "False" and turno < 9:
                     if turno%2 != 0:
+                        print("It's your turn to play!")
                         CurrentBoard(Board)
                         Jogada = ReadPlay(Board)
                         Play(Board, Jogada, Symbol)
@@ -169,6 +190,7 @@ while(True):
                                 turno += 1
                         CurrentBoard(Board)
                     #  Sent = WriteToSocket(ClientSocket, "WIN" + " " + GameRoom, ServerAddress)
+                        print("Awaiting result...")
                         Read = ReadFromSocket(ClientSocket)
                         Read = Read[0].split()
                         if(CheckWinner(Board) == Symbol):
@@ -182,3 +204,11 @@ while(True):
 
 
 
+        else:
+            if command not in comandos:
+                print("Esse comando não existe.")
+                continue
+            elif not LoggedIn:
+                print("Tem de efectuar o login para utilizar esse comando.")
+            elif LoggedIn:
+                print("Para efectuar esse commando não pode estar loggado.")

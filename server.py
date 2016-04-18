@@ -58,9 +58,14 @@ def main():
             print("Tamanho da lista a enviar:", len(StateList))
             print(SendPackets(ServerSocket, StateList, UserIP))
         elif OpCode[0] == "INV":
+
             User1 = OpCode[1]
-            User2 = OpCode[2]
             User1IP = LoggedInUsers.get(User1)[0]
+            if (not CheckLogin(LoggedInUsers, OpCode[0])):
+                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
+                continue
+            User2 = OpCode[2]
+
             User2IP = LoggedInUsers.get(User2)[0]
 
             print(User1IP)
@@ -73,9 +78,6 @@ def main():
             LoggedInUsers[User2] = User2IP, "Invited"
 
 
-          ########################################################
-
-         ###########################################################
         elif OpCode[0] == "PLAY":
             GameRoomID = int(OpCode[1])
             PlayPosition = OpCode[2]
@@ -123,7 +125,7 @@ def main():
             User1 = OpCode[1]
             User2 = OpCode[2]
             User1IP = LoggedInUsers.get(User1)[0]
-            User2IP = LoggedInUers.get(User2)[0]
+            User2IP = LoggedInUsers.get(User2)[0]
 
 
 
