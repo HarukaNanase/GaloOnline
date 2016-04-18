@@ -22,7 +22,7 @@ print("Escreva /registo para se registar!\nSe já se encontrar registado, utiliz
 
 while(True):
         command = input("Introduza o seu comando:")
-        if command == "/registo":
+        if command == "/registo" and not LoggedIn:
             print("Irá proceder ao registo de uma conta no GaloOnline.\nAo se registar está a aceitar os termos"
                   " e condições propostas.")
             tos = ""
@@ -50,7 +50,7 @@ while(True):
                             print("Account Sucessfully Created! Welcome to GaloOnline.")
                         else:
                             print("Account not created. User already exists.")
-        if command == "/login":
+        if command == "/login" and not LoggedIn:
             username = input('Introduza o seu username:')
             password= input('Introduza a sua password:')
             MsgToSend = "LOG " + username + " " + password
@@ -79,8 +79,8 @@ while(True):
             InviteMessage = "INV " + Username + " " + PlayerNr2
             Sent = WriteToSocket(ClientSocket, InviteMessage, ServerAddress)
             Read = ReadFromSocket(ClientSocket)
-
-            if Read[0] == SuccessMessage:
+            Read = Read[0].split()
+            if Read[0] == "ACCEPT":
                 print("Irá ser colocado num jogo com o jogador: " + PlayerNr2)
                 #TODO
                 Read = ReadFromSocket(ClientSocket)
@@ -90,7 +90,7 @@ while(True):
                 Symbol = "X"
                 turno = 1
                 Board = NewBoard()
-                while CheckWinner(Board) == "False":
+                while CheckWinner(Board) == "False" and turno < 9:
                     if turno%2 != 0:
                         CurrentBoard(Board)
                         Jogada = ReadPlay(Board)
@@ -110,16 +110,21 @@ while(True):
                 CurrentBoard(Board)
                 Winner = CheckWinner(Board)
                 if(Winner == Symbol):
-                    Sent = WriteToSocket(ClientSocket,"LOSE" + " " + GameRoom,ServerAddress)
+                    Sent = WriteToSocket(ClientSocket,"LOSE" + " " + GameRoom, ServerAddress)
+                    print("Awaiting result...")
+                    Read = ReadFromSocket(ClientSocket)
                     print("Parabens! Ganhou o jogo.")
                 else:
                     Sent = WriteToSocket(ClientSocket,"WIN" + " " + GameRoom ,ServerAddress)
+                    print("Awaiting result...")
+                    Read = ReadFromSocket(ClientSocket)
                     print("Para a proxima corre melhor!")
             else:
                 print("O convite foi recusado.")
                 continue
 
         elif command == "/inviteon" and LoggedIn:
+            Sent = WriteToSocket(ClientSocket, "INVON" + " " + Username, ServerAddress)
             print("Now awaiting an invite from a player...")
             Invite = ReadFromSocket(ClientSocket)
             print(Invite)
@@ -135,7 +140,7 @@ while(True):
                             break
 
                     if accept == "y" or accept == "Y":
-                        Sent = WriteToSocket(ClientSocket, SuccessMessage, EndPointIP)
+                        Sent = WriteToSocket(ClientSocket, "ACCEPT" + " " + Invite[1] + " " + Invite[2], EndPointIP)
                         Read = ReadFromSocket(ClientSocket)
                         GameRoom = Read[0]
                         print("Sala de jogo: ", GameRoom)
@@ -162,10 +167,11 @@ while(True):
                                 Msg = "PLAY " + GameRoom + " " + Jogada
                                 WriteToSocket(ClientSocket, Msg, ServerAddress)
                                 turno += 1
-
+                        CurrentBoard(Board)
+                    #  Sent = WriteToSocket(ClientSocket, "WIN" + " " + GameRoom, ServerAddress)
                         Read = ReadFromSocket(ClientSocket)
                         Read = Read[0].split()
-                        if(Read[0] == "WIN" and Read[1] == GameRoom):
+                        if(CheckWinner(Board) == Symbol):
                             print("You won the game!")
                         else:
                             print("You lost the game!")

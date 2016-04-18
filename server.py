@@ -1,26 +1,18 @@
 from GaloOnlineAPI import *
 from AccountSystem import *
-import json
-import sys
+
 
 
 #Define
 Sender = "Client"
 THIS = "Server"
-ServerIP = socket.gethostname()
-Port = 8000
-UsersPath = "./users/"
-FileExtension = ".txt"
+
 SuccessMessage = "ACK"
 ErrorMessage = "ERR"
 
-NumberOfTries = 5
-TimeOut = 2
 #EndDefine
 
-#Message Encodes
 
-#
 
 def main():
     CheckDir()
@@ -66,31 +58,24 @@ def main():
             print("Tamanho da lista a enviar:", len(StateList))
             print(SendPackets(ServerSocket, StateList, UserIP))
         elif OpCode[0] == "INV":
-
             User1 = OpCode[1]
             User2 = OpCode[2]
             User1IP = LoggedInUsers.get(User1)[0]
             User2IP = LoggedInUsers.get(User2)[0]
-            if (LoggedInUsers.get(User2)[1] == "Playing"):
+
+            print(User1IP)
+            print(User2IP)
+            if (LoggedInUsers.get(User2)[1] == "Playing" or LoggedInUsers.get(User2)[1] == "Invited"):
                 Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
                 continue
             OpCode = OpCode[0] + " " + OpCode[1] + " " + OpCode[2]
             Sent = WriteToSocket(ServerSocket, OpCode, User2IP)
-            Read = ReadFromSocket(ServerSocket)
+            LoggedInUsers[User2] = User2IP, "Invited"
 
-            if Read[0] == SuccessMessage:
-                Sent = WriteToSocket(ServerSocket, SuccessMessage, User1IP)
-                LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
-                LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
-                Jogos[len(Jogos)] = (User1,User2)
-                print(Jogos)
-                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User1IP)
-                Sent = WriteToSocket(ServerSocket,str(len(Jogos)-1),User2IP)
-                continue
-            else:
-                Sent = WriteToSocket(ServerSocket, ErrorMessage, User1IP)
-                continue
 
+          ########################################################
+
+         ###########################################################
         elif OpCode[0] == "PLAY":
             GameRoomID = int(OpCode[1])
             PlayPosition = OpCode[2]
@@ -106,17 +91,46 @@ def main():
             else:
                 WriteToSocket(ServerSocket, MessageForClient, Player1IP)
 
-        elif (OpCode[0] == "WIN" or OpCode[0] == "LOSE") and OpCode[1] in Jogos:
-            Player1 = Jogos.get(OpCode[1])[0]
-            Player2 = Jogos.get(OpCode[1])[1]
+        elif (OpCode[0] == "WIN" or OpCode[0] == "LOSE") and int(OpCode[1]) in Jogos:
+            print(Jogos)
+            print(Jogos.get(int(OpCode[1])))
+            Player1 = Jogos.get(int(OpCode[1]))[0]
+            Player2 = Jogos.get(int(OpCode[1]))[1]
             Player1IP = LoggedInUsers.get(Player1)[0]
             Player2IP = LoggedInUsers.get(Player2)[0]
+            Sent = WriteToSocket(ServerSocket, SuccessMessage, Player1IP)
+            print(Sent)
+            Sent = WriteToSocket(ServerSocket, SuccessMessage, Player2IP)
+            print(Sent)
+            LoggedInUsers[Player1] = Player1IP, "Online"
+            LoggedInUsers[Player2] = Player2IP, "Online"
+            #Remover o jogo da sala de jogos?? ou guardar historico?
 
-            if(UserIP == Player1IP):
-                WriteToSocket(ServerSocket, OpCode[0], Player2IP)
-            else:
-                WriteToSocket(ServerSocket, OpCode[0], Player1IP)
+        elif (OpCode[0] == "ACCEPT"):
+                User1 = OpCode[1]
+                User2 = OpCode[2]
+                User1IP = LoggedInUsers.get(User1)[0]
+                User2IP = LoggedInUsers.get(User2)[0]
+                Sent = WriteToSocket(ServerSocket, OpCode[0] + " " + OpCode[1] + " " + OpCode[2], User1IP)
+                LoggedInUsers[User1] = (LoggedInUsers.get(User1)[0], "Playing")
+                LoggedInUsers[User2] = (LoggedInUsers.get(User2)[0], "Playing")
+                Jogos[len(Jogos)] = (User1, User2)
+                print(Jogos)
+                Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User1IP)
+                Sent = WriteToSocket(ServerSocket, str(len(Jogos) - 1), User2IP)
 
+        elif (OpCode[0] == "DENY"):
+            User1 = OpCode[1]
+            User2 = OpCode[2]
+            User1IP = LoggedInUsers.get(User1)[0]
+            User2IP = LoggedInUers.get(User2)[0]
+
+
+
+
+        elif (OpCode[0] == "INVON"):
+            User1 = OpCode[1]
+            LoggedInUsers[User1] = LoggedInUsers.get(User1)[0], "Invitable"
 
         else:
             continue
